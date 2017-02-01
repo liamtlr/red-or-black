@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, get_list_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.views.decorators.csrf import csrf_protect
@@ -12,24 +12,39 @@ from django.shortcuts import render_to_response
 from .forms import RegistrationForm
 from django.contrib.auth import authenticate, login
 
+from .models import Game
+
 
 
 def home(request):
-    return render(request, 'home.html')
+    games = Game.objects.all()
+    print(games)
+    for game in games:
+        print(game.started_at)
+    return render(request, 'home.html', {'games': games})
+
+def view_game(request, pk):
+    game = get_object_or_404(Game, pk=pk)
+    return render(request, 'game/view.html', {'game': game})
+
+
+def games(request):
+    games = Game.objects.all()
+    hawwo = "CUNTS"
+    print(games)
+    for game in games:
+        print(game.started_at)
+    return render(request, 'games.html')
 
 def register(request):
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
         if form.is_valid():
             new_user = form.save()
-            messages.info(request, "Thanks for registering. You are now logged in.")
             new_user = authenticate(username=form.cleaned_data['username'],
                                     password=form.cleaned_data['password1'],
                                     )
             login(request, new_user)
-            profile = Blogger()
-            profile.user = new_user
-            profile.save()
             return HttpResponseRedirect('/')
 
     else:
@@ -44,6 +59,12 @@ def register(request):
 
 def registration_complete(request):
     return render_to_response('registration/registration_complete.html')
+
+def game_new(request):
+    new_game = Game()
+    new_game.create_game()
+    print('HAWWOOOO')
+    return HttpResponseRedirect('/')
 
 
 # Create your views here.
