@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1> Red or Black </h1>
+
+<a href="{% url 'game_new' %}" > New Game</a>
+
+<ul>
+{% for game in games %}
+<li>
+  <a href="{% url 'view_game' pk=game.pk %}">{{ game.pk }}: Ends at {{ game.ends_at }} </a>
+</li>
+{% endfor %}
+</ul>
+
+{% endblock %}
