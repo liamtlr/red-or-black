@@ -30,11 +30,13 @@ def game_new(request):
 def view_game(request, pk):
     game = get_object_or_404(Game, pk=pk)
     end_time_string = game.return_end_time
+    reds = Selection.objects.filter(game_id=pk, colour="red")
+    blacks = Selection.objects.filter(game_id=pk, colour="black")
     try:
         selection = Selection.objects.filter(player_id=request.user.id, game_id=pk).first()
     except Selection.DoesNotExist:
         selection = None
-    return render(request, 'game/view.html', {'game': game, 'end_time_string': end_time_string, 'selection': selection})
+    return render(request, 'game/view.html', {'game': game, 'end_time_string': end_time_string, 'selection': selection, 'blacks': blacks, 'reds': reds})
 
 def join_game(request, pk, selection):
     game = get_object_or_404(Game, pk=pk)
@@ -64,7 +66,6 @@ def register(request):
     token = {}
     token.update(csrf(request))
     token['form'] = form
-
     return render_to_response('registration/registration_form.html', token)
 
 
