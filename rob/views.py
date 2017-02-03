@@ -11,30 +11,38 @@ from django.template.context_processors import csrf
 from django.shortcuts import render_to_response
 from .forms import RegistrationForm
 from django.contrib.auth import authenticate, login
-
-from .models import Game
+from django.contrib.auth.models import User
+from datetime import datetime
+from .modeldir.models import *
+from django.core.exceptions import ObjectDoesNotExist
 
 
 
 def home(request):
-    games = Game.objects.all()
-    print(games)
-    for game in games:
-        print(game.started_at)
+    games = Game.objects.filter(ends_at__gte=datetime.now())
     return render(request, 'home.html', {'games': games})
+
+def game_new(request):
+    new_game = Game()
+    new_game.create_game()
+    return HttpResponseRedirect('/')
 
 def view_game(request, pk):
     game = get_object_or_404(Game, pk=pk)
-    return render(request, 'game/view.html', {'game': game})
+    end_time_string = game.return_end_time
+    try:
+        selection = Selection.objects.filter(player_id=request.user.id, game_id=pk).first()
+    except Selection.DoesNotExist:
+        selection = None
+    return render(request, 'game/view.html', {'game': game, 'end_time_string': end_time_string, 'selection': selection})
 
-
-def games(request):
-    games = Game.objects.all()
-    hawwo = "CUNTS"
-    print(games)
-    for game in games:
-        print(game.started_at)
-    return render(request, 'games.html')
+def join_game(request, pk, selection):
+    game = get_object_or_404(Game, pk=pk)
+    player = get_object_or_404(Player, pk=request.user.id)
+    selection = Selection(game=game, player=player ,colour=selection)
+    selection.save()
+    end_time_string = game.return_end_time
+    return redirect(view_game, pk = pk)
 
 def register(request):
     if request.method == 'POST':
@@ -45,6 +53,9 @@ def register(request):
                                     password=form.cleaned_data['password1'],
                                     )
             login(request, new_user)
+            player = Player()
+            player.user = new_user
+            player.save()
             return HttpResponseRedirect('/')
 
     else:
@@ -60,11 +71,6 @@ def register(request):
 def registration_complete(request):
     return render_to_response('registration/registration_complete.html')
 
-def game_new(request):
-    new_game = Game()
-    new_game.create_game()
-    print('HAWWOOOO')
-    return HttpResponseRedirect('/')
 
 
 # Create your views here.

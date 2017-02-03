@@ -10,8 +10,8 @@ from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     url(r'^$', views.home, name='home'),
-    url(r'^games/$', views.games, name='games'),
     url(r'^game/(?P<pk>\d+)/$', views.view_game, name='view_game'),
+    url(r'^game/(?P<pk>\d+)/selection/(?P<selection>(\w+))/$', views.join_game, name='join_game'),
     url(r'^accounts/register/$',views.register, name='register'),
     url(r'^login/$', auth_views.login, name='login'),
     url(r'^logout/$', auth_views.logout, {'next_page': '/'}, name='logout'),
