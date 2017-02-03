@@ -32,6 +32,8 @@ def view_game(request, pk):
     end_time_string = game.return_end_time
     reds = Selection.objects.filter(game_id=pk, colour="red")
     blacks = Selection.objects.filter(game_id=pk, colour="black")
+    for red in reds:
+        print(red.player.user)
     try:
         selection = Selection.objects.filter(player_id=request.user.id, game_id=pk).first()
     except Selection.DoesNotExist:
