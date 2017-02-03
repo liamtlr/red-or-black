@@ -1,3 +1,33 @@
-{{ game.id}}
+{% extends 'base.html' %}
+{% load static %}
 
-Ends at {{ game.ends_at}}
+
+{% block content %}
+
+  <p>Game {{ game.id}}</p>
+
+  <p>Ends at {{ game.ends_at }}</p>
+
+  <div id="countdown"></div>
+
+
+  {% if selection %}
+
+    <h3>You chose {{ selection.colour }}</h3>
+
+  {% else %}
+
+    <h3><a href="{% url 'join_game' pk=game.pk selection='red' %}">Red</a></h3>
+    <h3><a href="{% url 'join_game' pk=game.pk selection='black' %}">Black</a></h3>
+
+  {% endif %}
+
+    <script src="{% static "/js/plugin.js" %}"></script>
+    <script src="{% static "/js/countdown.js" %}"></script>
+    <script src="{% static "/js/view.js" %}"></script>
+
+    <script>
+      $("#countdown").countdown({ until: new Date({{end_time_string}})});
+    </script>
+
+{% endblock %}

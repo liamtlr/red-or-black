@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
     <title>Red or Black</title>
 </head>
 <body>
@@ -14,6 +14,7 @@
     <a href='/accounts/register'>Sign up</a>
     <a href='/login'>Log in</a>
   {% endif %}
+  <h1><a href="{% url 'home'  %}">Red or Black</a></h1>
     {% block content %}
     {% endblock %}
 

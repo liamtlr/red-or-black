@@ -1,17 +1,13 @@
 from django.db import models
-from django.contrib.auth.models import User
 from datetime import datetime, timedelta
 from django.utils import timezone
-
-
-# Create your models here.
-class User(models.Model):
-    User._meta.get_field('email')._unique = True
+from rob.modeldir.player import *
 
 class Game(models.Model):
     started_at = models.DateTimeField(
         default = timezone.now)
     ends_at = models.DateTimeField()
+    members = models.ManyToManyField(Player, through='Selection')
 
     def create_game(self):
         start_time = datetime.now()
@@ -19,3 +15,11 @@ class Game(models.Model):
         self.started_at = start_time
         self.ends_at = end_time
         self.save()
+
+    def return_end_time(self):
+        time = self.ends_at
+        join = ", "
+        first_bit = time.strftime('%Y')
+        middle_bit = str(time.month - 1)
+        end_bit = time.strftime('%d, %H, %M, %S')
+        return first_bit + join + middle_bit + join + end_bit
