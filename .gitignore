@@ -1,0 +1,8 @@
+__pycache__/
+mysite/__pycache__/*
+rob/__pycache__/*
+rob/modeldir/__pycache__/*
+*.pyc
+
+# ignore virtual environment
+myvenv/
