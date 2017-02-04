@@ -10,7 +10,7 @@
         <ul>
           {% for first_game in first_games %}
             <li>
-              <a href="{% url 'view_game' pk=first_game.pk %}">{{ first_game.pk }}: Round: {{ first_game.round_no}} Ends at {{ first_game.ends_at }} </a>
+              <a href="{% url 'set_stake' pk=first_game.pk %}">{{ first_game.pk }}: Round: {{ first_game.round_no}} Ends at {{ first_game.ends_at }} </a>
             </li>
           {% endfor %}
         </ul>

@@ -23,14 +23,14 @@ class UserForm(forms.ModelForm):
 
 class SelectionForm(forms.ModelForm):
 
-    CHOICES = ('red', 'black')
+    CHOICES = [('red', 'red'), ('black', 'black')]
 
     stake = forms.IntegerField(required=True)
-    choice = forms.ChoiceField(widget=forms.RadioSelect, choices=CHOICES)
+    colour = forms.ChoiceField(widget=forms.RadioSelect, choices=CHOICES)
 
     class Meta:
         model = Selection
-        fields = ('choice', 'stake',)
+        fields = ('colour', 'stake',)
         # labels = {
         #     'body': ('Your thoughts'),
         # }

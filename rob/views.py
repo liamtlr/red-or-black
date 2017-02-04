@@ -75,6 +75,28 @@ def remove_game(request, pk):
     selection.save()
     return HttpResponseRedirect('/')
 
+def set_stake(request, pk):
+    if request.method == "POST":
+        selection_form = SelectionForm(request.POST)
+        if selection_form.is_valid():
+            selection = selection_form.save(commit=False)
+            # selection.choice = selection_form.cleaned_data['choice']
+            selection.player_id = request.user.id
+            selection.game_id=pk
+            selection.active=True
+            selection.save()
+            return redirect(view_game, pk = pk)
+    else:
+        game = get_object_or_404(Game, pk=pk)
+        selection_form = SelectionForm()
+        end_time_string = game.return_end_time
+        reds = Selection.objects.filter(active=True, game_id=pk, colour="red")
+        blacks = Selection.objects.filter(active=True, game_id=pk, colour="black")
+        selection = None
+    return render(request, 'game/set_stake.html', {'game': game, 'end_time_string': end_time_string, 'selection': selection, 'blacks': blacks, 'reds': reds, 'selection_form': selection_form })
+
+
+
 def join_game(request, pk, choice):
     game = get_object_or_404(Game, pk=pk)
     player = get_object_or_404(Player, pk=request.user.id)

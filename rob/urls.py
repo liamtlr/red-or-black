@@ -18,4 +18,7 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^game/new/$', views.game_new, name='game_new'),
     url(r'^game/(?P<pk>\d+)/remove/$', views.remove_game, name='remove_game'),
+    url(r'^game/(?P<pk>\d+)/setstake/$', views.set_stake, name='set_stake'),
+
+
 ]

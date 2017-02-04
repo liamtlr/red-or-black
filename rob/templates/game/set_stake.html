@@ -9,20 +9,12 @@
   <p>Ends at {{ game.ends_at }}</p>
 
   <div id="countdown"></div>
-  {% if game.in_progress %}
-    {% if selection.active == True %}
-      {% if selection.colour == "" %}
+  
+      <form method="POST" class="post-form">{% csrf_token %}
       {{ selection_form.as_p }}
-        <h3><a href="{% url 'join_game' pk=game.pk choice='red' %}">Red</a></h3>
-        <h3><a href="{% url 'join_game' pk=game.pk choice='black' %}">Black</a></h3>
-      {% elif selection %}
-        <h3>You chose {{ selection.colour }}</h3>
-      {% endif %}
-    {% else %}
-    {{ selection_form.as_p }}
-      <h3><a href="{% url 'join_game' pk=game.pk choice='red' %}">Red</a></h3>
-      <h3><a href="{% url 'join_game' pk=game.pk choice='black' %}">Black</a></h3>
-    {% endif %}
+      <button type="submit" class="save btn btn-default">Save</button>
+      </form>
+
 
 
   {% if reds %}
@@ -47,11 +39,6 @@
     <h3> Nobody has chosen Black yet </h3>
   {% endif %}
 
-  {% else %}
-
-  <h2> Game is over </h2>
-
-  {% endif %}
 
     <script src="{% static "/js/plugin.js" %}"></script>
     <script src="{% static "/js/countdown.js" %}"></script>
