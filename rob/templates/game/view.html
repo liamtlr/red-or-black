@@ -9,13 +9,23 @@
   <p>Ends at {{ game.ends_at }}</p>
 
   <div id="countdown"></div>
+  {% if game.in_progress %}
+    {% if selection.active == True %}
+      {% if selection.colour == "" %}
+      {{ selection_form.as_p }}
 
-  {% if selection %}
-    <h3>You chose {{ selection.colour }}</h3>
-  {% else %}
-    <h3><a href="{% url 'join_game' pk=game.pk selection='red' %}">Red</a></h3>
-    <h3><a href="{% url 'join_game' pk=game.pk selection='black' %}">Black</a></h3>
-  {% endif %}
+        <!-- <h3><a href="{% url 'join_game' pk=game.pk choice='red' %}">Red</a></h3>
+        <h3><a href="{% url 'join_game' pk=game.pk choice='black' %}">Black</a></h3> -->
+      {% elif selection %}
+        <h3>You chose {{ selection.colour }}</h3>
+      {% endif %}
+    {% else %}
+    {{ selection_form.as_p }}
+
+      <!-- <h3><a href="{% url 'join_game' pk=game.pk choice='red' %}">Red</a></h3>
+      <h3><a href="{% url 'join_game' pk=game.pk choice='black' %}">Black</a></h3> -->
+    {% endif %}
+
 
   {% if reds %}
     <h3> {{ reds.count }} person{{ reds.count|pluralize }} chose Red </h3>
@@ -24,23 +34,25 @@
         <li> <h5>{{ red.player.user }} </h5> </li>
       {% endfor %}
     </ul>
-  {% elif selection is None %}
-    <h3> Be the first to choose Red </h3>
   {% else %}
-    <h3> Nobody has chosen Black yet </h3>
+    <h3> Nobody has chosen Red yet </h3>
   {% endif %}
 
   {% if blacks %}
-    <h3> {{ blacks.count }} people{{ blacks.count|pluralize }} chose Black </h3>
+    <h3> {{ blacks.count }} person{{ blacks.count|pluralize }} chose Black </h3>
     <ul>
       {% for black in blacks %}
         <li> <h5>{{ black.player.user }} </h5> </li>
       {% endfor %}
     </ul>
-  {% elif selection is None %}
-    <h3> Be the first to Black </h3>
   {% else %}
     <h3> Nobody has chosen Black yet </h3>
+  {% endif %}
+
+  {% else %}
+
+  <h2> Game is over </h2>
+
   {% endif %}
 
     <script src="{% static "/js/plugin.js" %}"></script>
