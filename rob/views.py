@@ -18,17 +18,25 @@ from django.core.exceptions import ObjectDoesNotExist
 import random
 from django.db.models import Count
 from .forms import SelectionForm
+# from django.db.models import F
+# from django.db.models.expressions import CombinedExpression, Value
 
 def home(request):
     expired_rounds = Game.objects.filter(ends_at__lte=datetime.now(), in_progress=True)
-    player = get_object_or_404(Player, pk=request.user.id)
     for game in expired_rounds:
+        if game.round_no > 1:
+            print("hawwo")
+            game.previous_colours.append(game.colour)
+            game.save()
+            # game.previous_colours = CombinedExpression(F('previous_colours'), '||', Value([game.colour]))
+            # game.save()
         choices = ["red", "black"]
         game.colour = random.choice(choices)
         winners = Selection.objects.filter(game_id=game.id).filter(active=True).filter(colour=game.colour)
         losers = Selection.objects.filter(game_id=game.id).filter(active=True).exclude(colour=game.colour)
         for loser in losers:
             loser.active=False
+            loser.lost_round = game.round_no
             loser.save()
         for winner in winners:
             winner.colour=""
@@ -46,10 +54,10 @@ def home(request):
     first_games = Game.objects.filter(round_no=1, ends_at__gte=datetime.now()).exclude(selection__player_id=request.user.id).distinct()
     second_games = Game.objects.filter(ends_at__gte=datetime.now(), selection__player_id=request.user.id, selection__active=True).exclude(selection__colour="").distinct()
     lost_games = Game.objects.filter(selection__player_id=request.user.id, selection__active=False, selection__viewable=True).distinct()
-    won_games = Game.objects.filter(in_progress=False, selection__player_id=request.user.id, selection__active=True).distinct()
+    won_games = Game.objects.filter(in_progress=False, selection__player_id=request.user.id, selection__active=True, selection__viewable=True).distinct()
     choose_games = Game.objects.filter(in_progress=True, selection__player_id=request.user.id, selection__active=True, selection__colour="").distinct()
 
-    return render(request, 'home.html', { 'player': player,'first_games': first_games, 'second_games': second_games, 'choose_games': choose_games, 'lost_games': lost_games, 'won_games': won_games })
+    return render(request, 'home.html', { 'first_games': first_games, 'second_games': second_games, 'choose_games': choose_games, 'lost_games': lost_games, 'won_games': won_games })
 
 
 def game_new(request):
@@ -133,19 +141,3 @@ def register(request):
 
 def registration_complete(request):
     return render_to_response('registration/registration_complete.html')
-
-        # live_user_games = Game.objects.filter(selection__player_id=request.user.id)
-        # first_game = Game.objects.first()
-        # print("!!!!!!")
-        # print(firsts)
-        # for selection in first_game.selection_set.all():
-        #     print(selection.colour)
-        #     print(selection.player_id)
-        # user_round_over_games = Game.objects.filter(ends_at__lte=datetime.now())
-        # for user_round_over_game in user_round_over_games:
-            # user_round_over_game.next_round
-
-
-
-
-# Create your views here.
