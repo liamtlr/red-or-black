@@ -24,14 +24,15 @@ from .forms import SelectionForm
 def home(request):
     expired_rounds = Game.objects.filter(ends_at__lte=datetime.now(), in_progress=True)
     for game in expired_rounds:
-        if game.round_no > 1:
-            print("hawwo")
-            game.previous_colours.append(game.colour)
-            game.save()
+        # if game.round_no > 1:
+        #     print("hawwo")
+        #     game.previous_colours.append(game.colour)
+        #     game.save()
             # game.previous_colours = CombinedExpression(F('previous_colours'), '||', Value([game.colour]))
             # game.save()
         choices = ["red", "black"]
         game.colour = random.choice(choices)
+        game.previous_colours.append(game.colour)
         winners = Selection.objects.filter(game_id=game.id).filter(active=True).filter(colour=game.colour)
         losers = Selection.objects.filter(game_id=game.id).filter(active=True).exclude(colour=game.colour)
         for loser in losers:
@@ -71,11 +72,30 @@ def view_game(request, pk):
     end_time_string = game.return_end_time
     reds = Selection.objects.filter(active=True, game_id=pk, colour="red")
     blacks = Selection.objects.filter(active=True, game_id=pk, colour="black")
+    if game.round_no > 1:
+        losers_by_round = []
+        counter = 1
+        print("it hits this")
+        while counter < game.round_no:
+            this_round_losers = Selection.objects.filter(game_id=pk, active=False, lost_round=counter).count()
+            losers_by_round.append(this_round_losers)
+            previous_colours = game.previous_colours
+            print(previous_colours)
+            print("HAWWOOO")
+            print (this_round_losers)
+            counter+=1
+            previous_colours.pop(0)
+    else:
+        losers_by_round = []
+        previous_colours = None
     try:
         selection = Selection.objects.get(player_id=request.user.id, game_id=pk, active=True)
     except Selection.DoesNotExist:
         selection = None
-    return render(request, 'game/view.html', {'game': game, 'end_time_string': end_time_string, 'selection': selection, 'blacks': blacks, 'reds': reds})
+    print("!!!")
+    print(losers_by_round)
+    print(previous_colours)
+    return render(request, 'game/view.html', {'game': game, 'end_time_string': end_time_string, 'selection': selection, 'blacks': blacks, 'reds': reds, 'losers_by_round': losers_by_round, 'previous_colours': previous_colours})
 
 def remove_game(request, pk):
     selection = get_object_or_404(Selection, game_id=pk, player_id=request.user.id)
