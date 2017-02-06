@@ -2,6 +2,8 @@ from django.db import models
 from datetime import datetime, timedelta
 from django.utils import timezone
 from rob.modeldir.player import *
+from django.contrib.postgres.fields import ArrayField
+
 
 class Game(models.Model):
     started_at = models.DateTimeField(
@@ -11,6 +13,7 @@ class Game(models.Model):
     owner = models.ForeignKey(Player,blank=True, null=True, default="", on_delete=models.CASCADE)
     members = models.ManyToManyField(Player, through='Selection')
     colour = models.CharField(max_length=10, default='', blank=True)
+    previous_colours = ArrayField(models.CharField(max_length=100, null=True, blank=True, default=["placeholder"]), null=True, blank=True, default=["placeholder"])
     in_progress = models.BooleanField(default=True, blank=True)
     pot = models.IntegerField(default=0, blank=True)
 

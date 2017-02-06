@@ -8,6 +8,17 @@
 
   <p>Ends at {{ game.ends_at }}</p>
 
+  <ol>
+  {% for round in losers_by_round %}
+    {% for colour in previous_colours %}
+      <li>
+        {{ colour }}
+        {{ round }} exited
+      </li>
+    {% endfor %}
+  {% endfor %}
+</ol>
+
   <div id="countdown"></div>
   {% if game.in_progress %}
     {% if selection.active == True %}

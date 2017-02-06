@@ -9,6 +9,7 @@ class Selection(models.Model):
     active = models.BooleanField(default=True, blank=True)
     viewable = models.BooleanField(default=True, blank=True)
     stake = models.IntegerField(default=True, blank=True)
+    lost_round = models.IntegerField(default=True, blank=True)
 
 
     class Meta:
