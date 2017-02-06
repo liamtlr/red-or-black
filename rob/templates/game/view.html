@@ -10,14 +10,15 @@
 
 
   <ol>
-    {% for round in losers_by_round %}
-      {% for colour in previous_colours %}
+    {% for colour, round in game_data %}
         <li>
-          <p> {{ colour|capfirst }}: {{ round }} player{{round|pluralize}} exited </p>
+          <p> {{colour|capfirst}}: {{ round }} player{{round|pluralize}} exited </p>
         </li>
-      {% endfor %}
     {% endfor %}
   </ol>
+
+
+
 
 
   {% if game.in_progress %}
@@ -36,10 +37,15 @@
       <h3><a href="{% url 'join_game' pk=game.pk choice='black' %}">Black</a></h3>
     {% endif %}
 
-        {% for colour in previous_colours %}
+        <ol>
+          {% for colour in previous_colours %}
+              <li>
+                  <p> {{ colour }}  </p>
+              </li>
+          {% endfor %}
+        </ol>
 
-            <p> {{ colour }}  </p>
-        {% endfor %}
+
 
 
   {% if reds %}
