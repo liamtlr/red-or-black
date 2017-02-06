@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/wirsindpapst/red-or-black.png?label=ready&title=Ready)](https://waffle.io/wirsindpapst/red-or-black)
 # Red or black
 
 A pseudo-gambling app
