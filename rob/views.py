@@ -72,11 +72,11 @@ def view_game(request, pk):
     end_time_string = game.return_end_time
     reds = Selection.objects.filter(active=True, game_id=pk, colour="red")
     blacks = Selection.objects.filter(active=True, game_id=pk, colour="black")
-    if game.round_no > 1:
+    if game.round_no >= 1:
         losers_by_round = []
         counter = 1
         print("it hits this")
-        while counter < game.round_no:
+        while counter <= game.round_no:
             this_round_losers = Selection.objects.filter(game_id=pk, active=False, lost_round=counter).count()
             losers_by_round.append(this_round_losers)
             previous_colours = game.previous_colours

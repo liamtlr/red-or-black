@@ -8,19 +8,20 @@
 
   <p>Ends at {{ game.ends_at }}</p>
 
-  <ol>
-  {% for round in losers_by_round %}
-    {% for colour in previous_colours %}
-      <li>
-        {{ colour }}
-        {{ round }} exited
-      </li>
-    {% endfor %}
-  {% endfor %}
-</ol>
 
-  <div id="countdown"></div>
+  <ol>
+    {% for round in losers_by_round %}
+      {% for colour in previous_colours %}
+        <li>
+          <p> {{ colour|capfirst }}: {{ round }} player{{round|pluralize}} exited </p>
+        </li>
+      {% endfor %}
+    {% endfor %}
+  </ol>
+
+
   {% if game.in_progress %}
+    <div id="countdown"></div>
     {% if selection.active == True %}
       {% if selection.colour == "" %}
       {{ selection_form.as_p }}
@@ -34,6 +35,11 @@
       <h3><a href="{% url 'join_game' pk=game.pk choice='red' %}">Red</a></h3>
       <h3><a href="{% url 'join_game' pk=game.pk choice='black' %}">Black</a></h3>
     {% endif %}
+
+        {% for colour in previous_colours %}
+
+            <p> {{ colour }}  </p>
+        {% endfor %}
 
 
   {% if reds %}
