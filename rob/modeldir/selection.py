@@ -11,6 +11,15 @@ class Selection(models.Model):
     stake = models.IntegerField(default=True, blank=True)
     lost_round = models.IntegerField(default=True, blank=True)
 
+    def set_loser(self, round_no):
+        self.active=False
+        self.lost_round = round_no
+        self.save()
+
+    def reset_winners(self):
+        self.colour=""
+        self.active=True
+        self.save()
 
     class Meta:
         unique_together = ('game', 'player')

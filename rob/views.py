@@ -46,7 +46,7 @@ def home(request):
         else:
             game.in_progress=False
         game.save()
-    first_games = Game.objects.filter(round_no=1, ends_at__gte=datetime.now()).exclude(selection__player_id=request.user.id).distinct()
+    first_games = Game.objects.first_round_games_not_started_by_current_user()
     second_games = Game.objects.filter(ends_at__gte=datetime.now(), selection__player_id=request.user.id, selection__active=True).exclude(selection__colour="").distinct()
     lost_games = Game.objects.filter(selection__player_id=request.user.id, selection__active=False, selection__viewable=True).distinct()
     won_games = Game.objects.filter(in_progress=False, selection__player_id=request.user.id, selection__active=True, selection__viewable=True).distinct()
@@ -71,13 +71,9 @@ def view_game(request, pk):
         counter = 1
         previous_colours = game.previous_colours
         previous_colours.pop(0)
-        print("it hits this")
         while counter <= game.round_no:
             this_round_losers = Selection.objects.filter(game_id=pk, active=False, lost_round=counter).count()
             losers_by_round.append(this_round_losers)
-            print(previous_colours)
-            print("HAWWOOO")
-            print (this_round_losers)
             counter+=1
     else:
         losers_by_round = []
@@ -86,10 +82,6 @@ def view_game(request, pk):
         selection = Selection.objects.get(player_id=request.user.id, game_id=pk, active=True)
     except Selection.DoesNotExist:
         selection = None
-    print("!!!")
-    print(losers_by_round)
-    print("|")
-    print(previous_colours)
     game_data = zip(previous_colours, losers_by_round)
     return render(request, 'game/view.html', {'game': game, 'end_time_string': end_time_string, 'selection': selection, 'blacks': blacks, 'reds': reds, 'losers_by_round': losers_by_round, 'previous_colours': previous_colours, 'game_data': game_data})
 
