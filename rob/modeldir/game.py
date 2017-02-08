@@ -3,7 +3,25 @@ from datetime import datetime, timedelta
 from django.utils import timezone
 from rob.modeldir.player import *
 from django.contrib.postgres.fields import ArrayField
-from model_utils.managers import PassThroughManager
+# from django.db.models import Queryset
+
+class GameQuerySet(models.QuerySet):
+    def first_round_games(self, user_id):
+        return self.filter(round_no=1,
+                           ends_at__gte=datetime.now()).exclude(selection__player_id=user_id).distinct()
+
+    def pending_games(self, user_id):
+        return self.filter(ends_at__gte=datetime.now(), selection__player_id=user_id, selection__active=True).exclude(selection__colour="").distinct()
+
+class GameManager(models.Manager):
+    def get_queryset(self):
+        return GameQuerySet(self.model, using=self._db)
+
+    def first_round_games(self, user_id):
+        return self.get_queryset().first_round_games(user_id)
+
+    def pending_games(self, user_id):
+        return self.get_queryset().pending_games(user_id)
 
 class Game(models.Model):
     started_at = models.DateTimeField(
@@ -16,6 +34,8 @@ class Game(models.Model):
     previous_colours = ArrayField(models.CharField(max_length=100, null=True, blank=True, default=["placeholder"]), null=True, blank=True, default=["placeholder"])
     in_progress = models.BooleanField(default=True, blank=True)
     pot = models.IntegerField(default=0, blank=True)
+
+    objects = GameManager()
 
 
     def create_game(self, user):
@@ -39,7 +59,3 @@ class Game(models.Model):
         self.colour = random.choice(choices)
         self.round_no += 1
         self.save()
-
-class GameQuerySet(models.query.QuerySet):
-    def first_round_games_not_started_by_current_user(self):
-        return self.filter(round_no=1, ends_at__gte=datetime.now()).exclude(selection__player_id=request.user.id).distinct()

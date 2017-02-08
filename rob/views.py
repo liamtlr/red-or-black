@@ -45,8 +45,7 @@ def home(request):
             game.ends_at = end_time
         else:
             game.in_progress=False
-        game.save()
-    first_games = Game.objects.first_round_games_not_started_by_current_user()
+    first_games = Game.objects.first_round_games(request.user.id)
     second_games = Game.objects.filter(ends_at__gte=datetime.now(), selection__player_id=request.user.id, selection__active=True).exclude(selection__colour="").distinct()
     lost_games = Game.objects.filter(selection__player_id=request.user.id, selection__active=False, selection__viewable=True).distinct()
     won_games = Game.objects.filter(in_progress=False, selection__player_id=request.user.id, selection__active=True, selection__viewable=True).distinct()
