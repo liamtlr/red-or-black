@@ -25,6 +25,6 @@ class SelectionTest(TestCase):
 
     def test_reset_winners(self):
         cheese = Selection.objects.get(game_id=6)
-        cheese.reset_winners()
+        cheese.reset_winner()
         self.assertEqual(cheese.colour, "")
         self.assertEqual(cheese.active, True)

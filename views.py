@@ -25,12 +25,12 @@ def home(request):
     expired_rounds = Game.objects.filter(ends_at__lte=datetime.now(), in_progress=True)
     for game in expired_rounds:
         game.select_colour()
-        winners = Selection.objects.get_winners(game.id, game.colour)
-        losers = Selection.objects.get_losers(game.id, game.colour)
+        winners = Selection.objects.get_winners()
+        losers = Selection.objects.get_losers()
         for loser in losers:
             loser.set_loser(game.round_no)
         for winner in winners:
-            winner.reset_winner()
+            winner.reset_winner
         if winners.count() > 1:
             game.increment_round()
         else:
@@ -52,18 +52,26 @@ def game_new(request):
 def view_game(request, pk):
     game = get_object_or_404(Game, pk=pk)
     end_time_string = game.return_end_time
-    reds = Selection.objects.get_reds(game.id)
-    blacks = Selection.objects.get_blacks(game.id)
+    reds = Selection.objects.filter(active=True, game_id=pk, colour="red")
+    blacks = Selection.objects.filter(active=True, game_id=pk, colour="black")
     if game.round_no > 1:
-        game = get_object_or_404(Game, pk=pk)
-        game_data = game.get_game_data()
+        losers_by_round = []
+        counter = 1
+        previous_colours = game.previous_colours
+        previous_colours.pop(0)
+        while counter <= game.round_no:
+            this_round_losers = Selection.objects.filter(game_id=pk, active=False, lost_round=counter).count()
+            losers_by_round.append(this_round_losers)
+            counter+=1
     else:
-        game_data = zip([], [])
+        losers_by_round = []
+        previous_colours = []
     try:
         selection = Selection.objects.get(player_id=request.user.id, game_id=pk, active=True)
     except Selection.DoesNotExist:
         selection = None
-    return render(request, 'game/view.html', {'game': game, 'end_time_string': end_time_string, 'selection': selection, 'blacks': blacks, 'reds': reds, 'game_data': game_data})
+    game_data = zip(previous_colours, losers_by_round)
+    return render(request, 'game/view.html', {'game': game, 'end_time_string': end_time_string, 'selection': selection, 'blacks': blacks, 'reds': reds, 'losers_by_round': losers_by_round, 'previous_colours': previous_colours, 'game_data': game_data})
 
 def remove_game(request, pk):
     selection = get_object_or_404(Selection, game_id=pk, player_id=request.user.id)
@@ -75,15 +83,19 @@ def set_stake(request, pk):
     if request.method == "POST":
         selection_form = SelectionForm(request.POST)
         if selection_form.is_valid():
-            selection = Selection()
-            selection.create_selection(selection_form, request.user.id, pk)
+            selection = selection_form.save(commit=False)
+            # selection.choice = selection_form.cleaned_data['choice']
+            selection.player_id = request.user.id
+            selection.game_id=pk
+            selection.active=True
+            selection.save()
             return redirect(view_game, pk = pk)
     else:
         game = get_object_or_404(Game, pk=pk)
         selection_form = SelectionForm()
         end_time_string = game.return_end_time
-        reds = Selection.objects.get_reds(game.id)
-        blacks = Selection.objects.get_blacks(game.id)
+        reds = Selection.objects.filter(active=True, game_id=pk, colour="red")
+        blacks = Selection.objects.filter(active=True, game_id=pk, colour="black")
         selection = None
     return render(request, 'game/set_stake.html', {'game': game, 'end_time_string': end_time_string, 'selection': selection, 'blacks': blacks, 'reds': reds, 'selection_form': selection_form })
 

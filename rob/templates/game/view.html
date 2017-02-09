@@ -23,18 +23,12 @@
 
   {% if game.in_progress %}
     <div id="countdown"></div>
-    {% if selection.active == True %}
-      {% if selection.colour == "" %}
+    {% if selection.colour == "" %}
       {{ selection_form.as_p }}
         <h3><a href="{% url 'join_game' pk=game.pk choice='red' %}">Red</a></h3>
         <h3><a href="{% url 'join_game' pk=game.pk choice='black' %}">Black</a></h3>
-      {% elif selection %}
+    {% elif selection %}
         <h3>You chose {{ selection.colour }}</h3>
-      {% endif %}
-    {% else %}
-    {{ selection_form.as_p }}
-      <h3><a href="{% url 'join_game' pk=game.pk choice='red' %}">Red</a></h3>
-      <h3><a href="{% url 'join_game' pk=game.pk choice='black' %}">Black</a></h3>
     {% endif %}
 
         <ol>
