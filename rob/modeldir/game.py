@@ -6,22 +6,43 @@ from django.contrib.postgres.fields import ArrayField
 # from django.db.models import Queryset
 
 class GameQuerySet(models.QuerySet):
-    def first_round_games(self, user_id):
+    def get_first_round_games(self, user_id):
         return self.filter(round_no=1,
                            ends_at__gte=datetime.now()).exclude(selection__player_id=user_id).distinct()
 
-    def pending_games(self, user_id):
+    def get_pending_games(self, user_id):
         return self.filter(ends_at__gte=datetime.now(), selection__player_id=user_id, selection__active=True).exclude(selection__colour="").distinct()
+
+    def get_lost_games(self, user_id):
+        return self.filter(selection__player_id=user_id, selection__active=False, selection__viewable=True).distinct()
+
+    def get_won_games(self, user_id):
+        return self.filter(in_progress=False, selection__player_id=user_id, selection__active=True, selection__viewable=True).distinct()
+
+    def get_live_games(self, user_id):
+        return self.filter(in_progress=True, selection__player_id=user_id, selection__active=True, selection__colour="").distinct()
+
 
 class GameManager(models.Manager):
     def get_queryset(self):
         return GameQuerySet(self.model, using=self._db)
 
-    def first_round_games(self, user_id):
-        return self.get_queryset().first_round_games(user_id)
+    def get_first_round_games(self, user_id):
+        return self.get_queryset().get_first_round_games(user_id)
 
-    def pending_games(self, user_id):
-        return self.get_queryset().pending_games(user_id)
+    def get_pending_games(self, user_id):
+        return self.get_queryset().get_pending_games(user_id)
+
+    def get_lost_games(self, user_id):
+        return self.get_queryset().get_lost_games(user_id)
+
+    def get_won_games(self, user_id):
+        return self.get_queryset().get_won_games(user_id)
+
+    def get_live_games(self, user_id):
+        return self.get_queryset().get_live_games(user_id)
+
+
 
 class Game(models.Model):
     started_at = models.DateTimeField(

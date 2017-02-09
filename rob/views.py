@@ -48,7 +48,7 @@ def home(request):
     first_games = Game.objects.first_round_games(request.user.id)
     second_games = Game.objects.filter(ends_at__gte=datetime.now(), selection__player_id=request.user.id, selection__active=True).exclude(selection__colour="").distinct()
     lost_games = Game.objects.filter(selection__player_id=request.user.id, selection__active=False, selection__viewable=True).distinct()
-    won_games = Game.objects.filter(in_progress=False, selection__player_id=request.user.id, selection__active=True, selection__viewable=True).distinct()
+    won_games = Game.objects.filter(in_progess=False, selection__player_id=request.user.id, selection__active=True, selection__viewable=True).distinct()
     choose_games = Game.objects.filter(in_progress=True, selection__player_id=request.user.id, selection__active=True, selection__colour="").distinct()
 
     return render(request, 'home.html', { 'first_games': first_games, 'second_games': second_games, 'choose_games': choose_games, 'lost_games': lost_games, 'won_games': won_games })

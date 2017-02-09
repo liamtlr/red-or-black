@@ -6,7 +6,7 @@ from rob.modeldir.user import *
 from django.contrib.auth.models import User
 import mock
 
-class SelectionManagerTest(TestCase):
+class SelectionTest(TestCase):
 
     def setUp(self):
         game = mock.Mock(spec=Game)
