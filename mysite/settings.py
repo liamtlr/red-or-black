@@ -133,3 +133,13 @@ LOGIN_REDIRECT_URL = 'home'
 import djcelery
 djcelery.setup_loader()
 BROKER_URL = 'django://'
+
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+
+# Tell nose to measure coverage on the 'foo' and 'bar' apps
+NOSE_ARGS = [
+    '--with-coverage',
+    '--cover-package=rob',
+]
+
+SOUTH_TESTS_MIGRATE = False  
