@@ -2,7 +2,7 @@ from django import template
 
 register = template.Library()
 
-@register.inclusion_tag('list_games.html')
+@register.inclusion_tag('subtemplates/list_games.html')
 def show_games(games, header, footer):
     games = games
     header = header
