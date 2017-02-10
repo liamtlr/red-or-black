@@ -7,7 +7,7 @@ A pseudo-gambling app
 
 ## Purpose
 
-I've taken it upon me to build this app to develop my skills in three areas
+I've taken it upon me to build this app to develop my skills in three areas:
 
 1. Game logic (the bare bones of the game)
 2. Algorithmic thinking (calculating winnings / cashing out based on multiple permutations)
