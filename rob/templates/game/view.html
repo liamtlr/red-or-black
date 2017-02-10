@@ -9,7 +9,6 @@
 
   <p>Ends at {{ game.ends_at }}</p>
 
-
   <ol>
     {% for colour, round in game_data %}
         <li>
@@ -28,21 +27,21 @@
         <h3>You chose {{ selection.colour }}</h3>
     {% endif %}
 
-  <ol>
-    {% for colour in previous_colours %}
-        <li>
-            <p> {{ colour }}  </p>
-        </li>
-    {% endfor %}
-  </ol>
+    <ol>
+      {% for colour in previous_colours %}
+          <li>
+              <p> {{ colour }}  </p>
+          </li>
+      {% endfor %}
+    </ol>
 
-  {% show_items reds "red" %}
+    {% show_items reds "red" %}
 
-  {% show_items blacks "black" %}
+    {% show_items blacks "black" %}
 
   {% else %}
 
-  <h2> Game is over </h2>
+    <h2> Game is over </h2>
 
   {% endif %}
 
