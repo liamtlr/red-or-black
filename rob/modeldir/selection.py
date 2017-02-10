@@ -59,6 +59,10 @@ class Selection(models.Model):
         self.active=True
         self.save()
 
+    def hide_game(self):
+        self.viewable=False
+        self.save()
+
 
     class Meta:
         unique_together = ('game', 'player')

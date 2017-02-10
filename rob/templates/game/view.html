@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load show_items %}
 
 
 {% block content %}
@@ -17,10 +18,6 @@
     {% endfor %}
   </ol>
 
-
-
-
-
   {% if game.in_progress %}
     <div id="countdown"></div>
     {% if selection.colour == "" %}
@@ -31,38 +28,17 @@
         <h3>You chose {{ selection.colour }}</h3>
     {% endif %}
 
-        <ol>
-          {% for colour in previous_colours %}
-              <li>
-                  <p> {{ colour }}  </p>
-              </li>
-          {% endfor %}
-        </ol>
+  <ol>
+    {% for colour in previous_colours %}
+        <li>
+            <p> {{ colour }}  </p>
+        </li>
+    {% endfor %}
+  </ol>
 
+  {% show_items reds "red" %}
 
-
-
-  {% if reds %}
-    <h3> {{ reds.count }} person{{ reds.count|pluralize }} chose Red </h3>
-    <ul>
-      {% for red in reds %}
-        <li> <h5>{{ red.player.user }} </h5> </li>
-      {% endfor %}
-    </ul>
-  {% else %}
-    <h3> Nobody has chosen Red yet </h3>
-  {% endif %}
-
-  {% if blacks %}
-    <h3> {{ blacks.count }} person{{ blacks.count|pluralize }} chose Black </h3>
-    <ul>
-      {% for black in blacks %}
-        <li> <h5>{{ black.player.user }} </h5> </li>
-      {% endfor %}
-    </ul>
-  {% else %}
-    <h3> Nobody has chosen Black yet </h3>
-  {% endif %}
+  {% show_items blacks "black" %}
 
   {% else %}
 

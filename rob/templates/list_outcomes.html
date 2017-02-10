@@ -1,0 +1,12 @@
+
+{% if outcomes %}
+<h3> {{ outcome_string }} </h3>
+<ul>
+  {% for outcome in outcomes %}
+    <li>
+      <a href="{% url 'view_game' pk=outcome.pk %}">{{ outcome.pk }}: Round: {{ outcome.round_no}}  </a>
+      <a href="{% url 'remove_game' pk=outcome.pk %}"> Remove  </a>
+    </li>
+  {% endfor %}
+</ul>
+{% endif %}

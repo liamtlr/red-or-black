@@ -1,0 +1,11 @@
+ 
+{% if items %}
+  <h3> {{ items.count }} person{{ items.count|pluralize }} chose {{colour}} </h3>
+  <ul>
+    {% for item in items %}
+      <li> <h5>{{ item.player.user }} </h5> </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <h3> Nobody has chosen {{colour}} yet </h3>
+{% endif %}

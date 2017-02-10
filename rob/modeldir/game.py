@@ -8,6 +8,10 @@ import random
 # from django.db.models import Queryset
 
 class GameQuerySet(models.QuerySet):
+
+    def get_expired_games(self):
+        return self.filter(ends_at__lte=datetime.now(), in_progress=True).distinct()
+
     def get_first_round_games(self, user_id):
         return self.filter(round_no=1,
                            ends_at__gte=datetime.now()).exclude(selection__player_id=user_id).distinct()
@@ -26,8 +30,12 @@ class GameQuerySet(models.QuerySet):
 
 
 class GameManager(models.Manager):
+
     def get_queryset(self):
         return GameQuerySet(self.model, using=self._db)
+
+    def get_expired_games(self):
+        return self.get_queryset().get_expired_games()
 
     def get_first_round_games(self, user_id):
         return self.get_queryset().get_first_round_games(user_id)
@@ -84,10 +92,10 @@ class Game(models.Model):
         self.save()
 
     def increment_round(self):
-        self.round_no += 1
         start_time = datetime.now()
-        self.started_at = start_time
         end_time = start_time + timedelta(minutes=1)
+        self.round_no += 1
+        self.started_at = start_time
         self.ends_at = end_time
         self.save()
 
@@ -105,3 +113,7 @@ class Game(models.Model):
             losers_by_round.append(this_round_losers)
             counter+=1
         return zip(previous_colours, losers_by_round)
+
+    def hide_game(self):
+        self.viewable = False
+        self.save()
