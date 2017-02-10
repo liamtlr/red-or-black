@@ -1,99 +1,63 @@
 {% extends 'base.html' %}
+{% load show_games %}
+{% load show_outcomes %}
 
 {% block content %}
 
-<div class="container">
-  <div class="pure-g">
-      <div class="pure-u-1-3">
-        {% if first_round_games %}
-        <h3> Games ready to join </h3>
-        <ul>
-          {% for first_round_game in first_round_games %}
-            <li>
-              <a href="{% url 'set_stake' pk=first_round_game.pk %}">{{ first_round_game.pk }}: Round: {{ first_round_game.round_no}} Ends at {{ first_round_game.ends_at }} </a>
-            </li>
-          {% endfor %}
-        </ul>
-        {% else %}
-          <h5> There are no games available to join </h5>
-        {% endif %}
-      </div>
-      <div class="pure-u-1-3">
-        {% if pending_games %}
-        <h3> Games pending a result </h3>
-        <ul>
-          {% for pending_game in pending_games %}
-            <li>
-              <a href="{% url 'view_game' pk=pending_game.pk %}">{{ pending_game.pk }}: Round: {{ pending_game.round_no}} Ends at {{ pending_game.ends_at }} </a>
-            </li>
-          {% endfor %}
-        </ul>
-        {% else %}
-          <h5> You have no games pending outcome </h5>
-        {% endif %}
-      </div>
-      <div class="pure-u-1-3">
-        {% if live_games %}
-        <h3> Games where you need to make a move </h3>
-        <ul>
-          {% for live_game in live_games %}
-            <li>
-              <a href="{% url 'view_game' pk=live_game.pk %}">{{ live_game.pk }}: Round: {{ live_game.round_no}} Ends at {{ live_game.ends_at }} </a>
-            </li>
-          {% endfor %}
-        </ul>
-        {% else %}
-          <h5> You have no games where you need to make a move </h5>
-        {% endif %}
-      </div>
-  </div>
+{% if user.is_authenticated %}
 
-  <div class="pure-g">
-    <div class="pure-u-4-24"></div>
-      <div class="pure-u-8-24">
-        {% if lost_games %}
-        <h3> Games you've lost </h3>
-        <ul>
-          {% for lost_game in lost_games %}
-            <li>
-              <a href="{% url 'view_game' pk=lost_game.pk %}">{{ lost_game.pk }}: Round: {{ lost_game.round_no}}  </a>
-              <a href="{% url 'remove_game' pk=lost_game.pk %}"> Remove  </a>
-            </li>
-          {% endfor %}
-        </ul>
-        {% endif %}
-      </div>
-      <div class="pure-u-8-24">
-        {% if won_games %}
-        <h3> Games you've won </h3>
-        <ul>
-          {% for won_game in won_games %}
-            <li>
-              <a href="{% url 'view_game' pk=won_game.pk %}">{{ won_game.pk }}: Round: {{ won_game.round_no}} Ends at {{ won_game.ends_at }} </a>
-              <a href="{% url 'remove_game' pk=won_game.pk %}"> Remove  </a>
-            </li>
-          {% endfor %}
-        </ul>
-        {% endif %}
-      </div>
+
+  <div class="container">
+    <div class="pure-g">
+        <div class="pure-u-1-3">
+          {% show_games first_round_games "Games ready to join" "There are no games available to join" %}
+        </div>
+        <div class="pure-u-1-3">
+          {% show_games pending_games "Games pending a result" "You have no games pending outcome" %}
+        </div>
+        <div class="pure-u-1-3">
+          {% show_games live_games "Games where you need to make a movet" "You have no games where you need to make a move" %}
+        </div>
+    </div>
+
+
+
+    <div class="pure-g">
       <div class="pure-u-4-24"></div>
+        <div class="pure-u-8-24">
+          <!-- {% if lost_games %}
+          <h3> Games you've lost </h3>
+          <ul>
+            {% for lost_game in lost_games %}
+              <li>
+                <a href="{% url 'view_game' pk=lost_game.pk %}">{{ lost_game.pk }}: Round: {{ lost_game.round_no}}  </a>
+                <a href="{% url 'remove_game' pk=lost_game.pk %}"> Remove  </a>
+              </li>
+            {% endfor %}
+          </ul>
+          {% endif %} -->
+          {% show_outcomes lost_games "Games you've lost" %}
+        </div>
+        <div class="pure-u-8-24">
+          {% show_outcomes won_games "Games you've won" %}
+
+          <!-- {% if won_games %}
+          <h3> Games you've won </h3>
+          <ul>
+            {% for won_game in won_games %}
+              <li>
+                <a href="{% url 'view_game' pk=won_game.pk %}">{{ won_game.pk }}: Round: {{ won_game.round_no}} Ends at {{ won_game.ends_at }} </a>
+                <a href="{% url 'remove_game' pk=won_game.pk %}"> Remove  </a>
+              </li>
+            {% endfor %}
+          </ul>
+          {% endif %}
+        </div> -->
+        <div class="pure-u-4-24"></div>
+    </div>
   </div>
-</div>
 
-<!-- <ul>
-  {% for live_game in live_games %}
-    <li>
-      <a href="{% url 'view_game' pk=live_game.pk %}">{{ live_game.pk }}: Ends at {{ live_game.ends_at }} </a>
-    </li>
-  {% endfor %}
-</ul> -->
+{% endif %}
 
-<!-- <ul>
-  {% for user_round_over_game in user_round_over_games %}
-    <li>
-      <a href="{% url 'view_game' pk=user_round_over_game.pk %}">{{ user_round_over_game.pk }}: live YOUR COLOUR </a>
-    </li>
-  {% endfor %}
-</ul> -->
 
 {% endblock %}

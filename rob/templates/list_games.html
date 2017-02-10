@@ -1,0 +1,13 @@
+
+{% if games %}
+<h3> {{ header }} </h3>
+<ul>
+  {% for game in games %}
+    <li>
+      <a href="{% url link pk=game.pk %}">{{ game.pk }}: Round: {{ game.round_no}} Ends at {{ game.ends_at }} </a>
+    </li>
+  {% endfor %}
+</ul>
+{% else %}
+  <h5> {{ footer }} </h5>
+{% endif %}

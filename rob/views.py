@@ -18,11 +18,11 @@ from django.core.exceptions import ObjectDoesNotExist
 import random
 from django.db.models import Count
 from .forms import SelectionForm
-# from django.db.models import F
-# from django.db.models.expressions import CombinedExpression, Value
+from django import template
+
 
 def home(request):
-    expired_rounds = Game.objects.filter(ends_at__lte=datetime.now(), in_progress=True)
+    expired_rounds = Game.objects.get_expired_games()
     for game in expired_rounds:
         game.select_colour()
         winners = Selection.objects.get_winners(game.id, game.colour)
@@ -67,8 +67,7 @@ def view_game(request, pk):
 
 def remove_game(request, pk):
     selection = get_object_or_404(Selection, game_id=pk, player_id=request.user.id)
-    selection.viewable = False
-    selection.save()
+    selection.hide_game()
     return HttpResponseRedirect('/')
 
 def set_stake(request, pk):
@@ -110,9 +109,7 @@ def register(request):
                                     password=form.cleaned_data['password1'],
                                     )
             login(request, new_user)
-            player = Player()
-            player.user = new_user
-            player.save()
+            player = Player.objects.create(user=new_user)
             return HttpResponseRedirect('/')
 
     else:
