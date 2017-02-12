@@ -7,6 +7,7 @@ from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib import messages
 from django.template.context_processors import csrf
 from django.shortcuts import render_to_response
 from .forms import RegistrationForm
@@ -26,7 +27,17 @@ def home(request):
     for game in expired_rounds:
         game.select_colour()
         winners = Selection.objects.get_winners(game.id, game.colour)
+        current_user_winner = winners.filter(player_id=request.user.id)
         losers = Selection.objects.get_losers(game.id, game.colour)
+        current_user_loser = losers.filter(player_id=request.user.id)
+        if current_user_loser:
+            messages.info(request, 'You have been eliminated from game ' + str(current_user_loser.first().game_id))
+        if current_user_winner:
+            game = get_object_or_404(Game, pk=current_user_winner.first().game_id)
+            if winners.count() == 1:
+                messages.info(request, 'You have won game ' + str(game.pk))
+            else:
+                messages.info(request, 'You are through to the next round in game ' + str(game.pk))
         for loser in losers:
             loser.set_loser(game.round_no)
         for winner in winners:
@@ -37,6 +48,11 @@ def home(request):
             game.end_game()
     first_round_games = Game.objects.get_first_round_games(request.user.id)
     pending_games = Game.objects.get_pending_games(request.user.id)
+    print("!!!")
+    print(pending_games)
+    print(pending_games.first())
+    gammme = Game.objects.get(pk=121)
+    print(gammme.members)
     lost_games = Game.objects.get_lost_games(request.user.id)
     won_games = Game.objects.get_won_games(request.user.id)
     live_games = Game.objects.get_live_games(request.user.id)
@@ -86,8 +102,6 @@ def set_stake(request, pk):
         selection = None
     return render(request, 'game/set_stake.html', {'game': game, 'end_time_string': end_time_string, 'selection': selection, 'blacks': blacks, 'reds': reds, 'selection_form': selection_form })
 
-
-
 def join_game(request, pk, choice):
     game = get_object_or_404(Game, pk=pk)
     player = get_object_or_404(Player, pk=request.user.id)
@@ -97,6 +111,7 @@ def join_game(request, pk, choice):
     except Selection.DoesNotExist:
         selection = Selection(game=game, player=player ,colour=choice)
     selection.save()
+    print(selection)
     end_time_string = game.return_end_time
     return redirect(view_game, pk = pk)
 

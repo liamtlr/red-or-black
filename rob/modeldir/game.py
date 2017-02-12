@@ -93,7 +93,7 @@ class Game(models.Model):
 
     def increment_round(self):
         start_time = datetime.now()
-        end_time = start_time + timedelta(minutes=1)
+        end_time = start_time + timedelta(minutes=5)
         self.round_no += 1
         self.started_at = start_time
         self.ends_at = end_time
