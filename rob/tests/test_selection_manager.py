@@ -14,8 +14,6 @@ class SelectionTest(TestCase):
     #     Selection.objects.create(game_id=6, player_id=2, colour="red")
 
     def test_get_winners_returns_all_winners(self):
-        now = datetime.now()
-        hour_from_now = now + timedelta(hours=1)
         game = Game.objects.create(colour="black", started_at=now, ends_at=hour_from_now)
         winning_selection = Selection.objects.create(game_id=game.pk, player_id=5,colour='black')
         losing_selection = Selection.objects.create(game_id=game.pk, player_id=6,colour='red')
